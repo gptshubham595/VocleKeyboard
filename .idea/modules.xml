@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/AndroidCustomKeyboard.iml" filepath="$PROJECT_DIR$/AndroidCustomKeyboard.iml" group="AndroidCustomKeyboard" />
+      <module fileurl="file://$PROJECT_DIR$/app/AndroidCustomKeyboard-app.iml" filepath="$PROJECT_DIR$/app/AndroidCustomKeyboard-app.iml" group="AndroidCustomKeyboard/app" />
+      <module fileurl="file://$PROJECT_DIR$/Keyboard.iml" filepath="$PROJECT_DIR$/Keyboard.iml" group="Keyboard" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Keyboard/app" />
+    </modules>
+  </component>
+</project>
