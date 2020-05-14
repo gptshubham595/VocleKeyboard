@@ -1,16 +1,26 @@
 package com.vocle.keyboard;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.Toast;
+
+import com.github.squti.androidwaverecorder.WaveRecorder;
+import com.nabinbhandari.android.permissions.PermissionHandler;
+import com.nabinbhandari.android.permissions.Permissions;
+
+import java.util.ArrayList;
 
 public class VocleKeyboard extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
 
@@ -18,13 +28,53 @@ public class VocleKeyboard extends InputMethodService implements KeyboardView.On
     private Keyboard keyboard;
     public SharedPreferences pre;
     private boolean isCaps = false;
+    WaveRecorder waveRecorder;
+    String outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/recording.wav";
 
+    private void startRecord() {
+        try {
+            //set time in mili
+            Thread.sleep(80);
+            waveRecorder = new WaveRecorder(outputFile);
+            waveRecorder.setNoiseSuppressorActive(true);
+            waveRecorder.startRecording();
+            Toast.makeText(this, "Recording Voice", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-    //Press Ctrl+O
+    }
+
+    private void stopRecord() {
+        try {
+            //set time in mili
+            Thread.sleep(80);
+            waveRecorder.stopRecording();
+            Toast.makeText(this, "Saved Recording", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
     @Override
     public View onCreateInputView() {
+        String[] perm = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO};
+
+        Permissions.check(this/*context*/, perm, null/*rationale*/, null/*options*/, new PermissionHandler() {
+            @Override
+            public void onGranted() {
+                // do your task.
+                Log.d("RECORD PERMISSION", "DONE");
+            }
+
+            @Override
+            public void onDenied(Context context, ArrayList<String> deniedPermissions) {
+                super.onDenied(context, deniedPermissions);
+                Log.d("RECORD PERMISSION", "DONE");
+            }
+        });
+
         pre = PreferenceManager.getDefaultSharedPreferences(this);
         int theme = pre.getInt("theme", 1);
 
@@ -38,9 +88,11 @@ public class VocleKeyboard extends InputMethodService implements KeyboardView.On
         } else if (theme == 3) {
             kv = (KeyboardView) this.getLayoutInflater().inflate(R.layout.voclekeyboard, null);
             keyboard = new Keyboard(this, R.xml.voclerecording);
+            startRecord();
         } else {
             kv = (KeyboardView) this.getLayoutInflater().inflate(R.layout.voclekeyboard, null);
             keyboard = new Keyboard(this, R.xml.voclechoose);
+            stopRecord();
         }
 
         kv.setKeyboard(keyboard);
